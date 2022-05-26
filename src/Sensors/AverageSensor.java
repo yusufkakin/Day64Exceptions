@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class AverageSensor implements Sensor{
     public ArrayList<Sensor> sensors;
-    private ArrayList<Integer> readingList;
+    public ArrayList<Integer> readingList;
 
     public AverageSensor(){
         this.sensors = new ArrayList<>();
@@ -15,12 +15,9 @@ public class AverageSensor implements Sensor{
 
     @Override
     public boolean isOn() {
-        if(sensors.stream()
+        return sensors.stream()
                 .filter(sensor -> !sensor.isOn()).collect(Collectors.toCollection(ArrayList::new))
-                .size()!=0){
-            return false;
-        }
-        return true;
+                .size() == 0;
     }
 
     @Override
@@ -40,12 +37,11 @@ public class AverageSensor implements Sensor{
     @Override
     public int read() {
         if(!isOn()) {
-            throw new IllegalStateException("Warning: attempt to read while "
-                    + "one or mre sensors are off");
+            throw new IllegalStateException("Sensors are off");
         }
-        int j = (int) sensors.stream().mapToInt(Sensor::read).average().getAsDouble();
-        readingList.add(j);
-        return j;
+        int sensorList = (int) sensors.stream().mapToInt(Sensor::read).average().getAsDouble();
+        readingList.add(sensorList);
+        return sensorList;
     }
 
     public void addSensor(Sensor toAdd){
